@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="orange">#FFA500</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorBackground">#1C1C1E</color>
+    <color name="colorButtonNumber">#3A3A3C</color>
+    <color name="colorButtonOperator">#FF9F0A</color>
+    <color name="colorButtonSpecial">#636366</color>
+    <color name="colorTextPrimary">#FFFFFF</color>
+    <color name="colorTextSecondary">#8E8E93</color>
+</resources>

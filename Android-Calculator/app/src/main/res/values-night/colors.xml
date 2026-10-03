@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Theme Semantic Colors -->
+    <color name="colorBackground">#121212</color>
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorButtonNumber">#2C2C2E</color>
+    <color name="colorButtonSpecial">#48484A</color>
+    <color name="colorButtonOperator">#FF9F0A</color>
+    <color name="colorButtonOperatorActive">#FFFFFF</color>
+    <color name="colorOperatorActiveText">#FF9F0A</color>
+    <color name="colorButtonFunction">#3A3A3C</color>
+
+    <color name="colorTextPrimary">#FFFFFF</color>
+    <color name="colorTextSecondary">#8E8E93</color>
+    <color name="colorTextSpecial">#FFFFFF</color>
+    <color name="colorTextOperator">#FFFFFF</color>
+
+    <color name="colorDivider">#2C2C2E</color>
+    <color name="rippleColor">#30FFFFFF</color>
+</resources>

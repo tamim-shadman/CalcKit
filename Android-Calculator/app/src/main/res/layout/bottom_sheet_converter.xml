@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet"
+    android:paddingBottom="16dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/btn_special" />
+
+    <!-- Title Bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="@string/converter_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCopyConverted"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="@string/copy_result"
+            android:textColor="@color/colorButtonOperator"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <!-- Horizontal Category Chips -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipLength"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Length"
+                android:checked="true" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipWeight"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weight" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTemp"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temperature" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipData"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Data" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSpeed"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Speed" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipArea"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Area" />
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Conversion Box (From & To) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/btn_function"
+        android:padding="12dp">
+
+        <!-- From Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/spinnerFrom"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1.2"
+                android:popupBackground="@color/colorSurface" />
+
+            <TextView
+                android:id="@+id/textFromValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.8"
+                android:gravity="end"
+                android:text="1"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <!-- Swap Divider -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:background="@color/colorDivider" />
+
+            <ImageButton
+                android:id="@+id/btnSwapUnits"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/btn_special"
+                android:contentDescription="@string/swap_units"
+                android:src="@drawable/ic_swap_vert"
+                app:tint="@color/colorTextPrimary" />
+        </RelativeLayout>
+
+        <!-- To Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/spinnerTo"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1.2"
+                android:popupBackground="@color/colorSurface" />
+
+            <TextView
+                android:id="@+id/textToValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.8"
+                android:gravity="end"
+                android:text="0"
+                android:textColor="@color/colorButtonOperator"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:singleLine="true" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Keypad for converter -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnC7"
+                android:text="7"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnC8"
+                android:text="8"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnC9"
+                android:text="9"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnCDel"
+                android:text="DEL"
+                style="@style/CalcButton.Special" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnC4"
+                android:text="4"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnC5"
+                android:text="5"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnC6"
+                android:text="6"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnCClear"
+                android:text="AC"
+                style="@style/CalcButton.Special" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnC1"
+                android:text="1"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnC2"
+                android:text="2"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnC3"
+                android:text="3"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnCNegate"
+                android:text="±"
+                style="@style/CalcButton.Special" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnC0"
+                android:text="0"
+                android:layout_weight="2"
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnCDot"
+                android:text="."
+                style="@style/CalcButton.Number" />
+
+            <Button
+                android:id="@+id/btnCDone"
+                android:text="Done"
+                style="@style/CalcButton.Operator" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

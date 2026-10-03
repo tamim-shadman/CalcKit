@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/colorBackground"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    tools:context=".MainActivity">
+
+    <!-- Left Column: Scientific Suite & Memory Bar -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.9"
+        android:orientation="vertical"
+        android:paddingEnd="6dp">
+
+        <!-- Header in landscape -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/appTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:id="@+id/badgeAngleMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_badge"
+                    android:text="DEG"
+                    android:textColor="@color/colorButtonOperator"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/badgeMemory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_badge"
+                    android:text="M"
+                    android:textColor="@color/colorButtonOperator"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnConverter"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_converter"
+                    android:src="@drawable/ic_converter"
+                    app:tint="@color/colorTextSecondary" />
+
+                <ImageButton
+                    android:id="@+id/btnHistory"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_history"
+                    android:src="@drawable/ic_history"
+                    app:tint="@color/colorTextSecondary" />
+
+                <ImageButton
+                    android:id="@+id/btnSettings"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_settings"
+                    android:src="@drawable/ic_settings"
+                    app:tint="@color/colorTextSecondary" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <!-- Memory Row -->
+        <LinearLayout
+            android:id="@+id/rowMemory"
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="2dp">
+
+            <Button
+                android:id="@+id/btnMC"
+                android:text="MC"
+                style="@style/CalcButton.Memory" />
+
+            <Button
+                android:id="@+id/btnMR"
+                android:text="MR"
+                style="@style/CalcButton.Memory" />
+
+            <Button
+                android:id="@+id/btnMPlus"
+                android:text="M+"
+                style="@style/CalcButton.Memory" />
+
+            <Button
+                android:id="@+id/btnMMinus"
+                android:text="M−"
+                style="@style/CalcButton.Memory" />
+
+            <Button
+                android:id="@+id/btnMS"
+                android:text="MS"
+                style="@style/CalcButton.Memory" />
+
+        </LinearLayout>
+
+        <!-- Scientific Rows -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSin"
+                android:text="sin"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnCos"
+                android:text="cos"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnTan"
+                android:text="tan"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnLog"
+                android:text="log"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnLn"
+                android:text="ln"
+                style="@style/CalcButton.Function" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSqrt"
+                android:text="√"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnSquare"
+                android:text="x²"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnPower"
+                android:text="xʸ"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnFact"
+                android:text="x!"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnReciprocal"
+                android:text="1/x"
+                style="@style/CalcButton.Function" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPi"
+                android:text="π"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/btnE"
+                android:text="e"
+                style="@style/CalcButton.Function" />
+
+            <Button
+                android:id="@+id/percent"
+                android:text="%"
+                style="@style/CalcButton.Special" />
+
+            <Button
+                android:id="@+id/negate"
+                android:text="±"
+                style="@style/CalcButton.Special" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/ac"
+                android:text="AC"
+                style="@style/CalcButton.Special" />
+
+            <Button
+                android:id="@+id/del"
+                android:text="DEL"
+                style="@style/CalcButton.Special" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Right Column: Display and Standard Keypad -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2.1"
+        android:orientation="vertical">
+
+        <!-- Display Area -->
+        <LinearLayout
+            android:id="@+id/displayContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:orientation="vertical"
+            android:gravity="bottom"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="4dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/expression"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="18sp"
+                android:gravity="end"
+                android:maxLines="1"
+                android:ellipsize="start"
+                android:fontFamily="sans-serif"
+                android:text="" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/screen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="48sp"
+                android:gravity="end"
+                android:maxLines="1"
+                android:fontFamily="sans-serif-light"
+                android:includeFontPadding="false"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="24sp"
+                app:autoSizeMaxTextSize="48sp"
+                app:autoSizeStepGranularity="2sp" />
+
+        </LinearLayout>
+
+        <!-- Keypad Area: 4x4 grid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3.2"
+            android:orientation="vertical">
+
+            <!-- Row 1: 7, 8, 9, ÷ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/num7"
+                    android:text="7"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/num8"
+                    android:text="8"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/num9"
+                    android:text="9"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/div"
+                    android:text="÷"
+                    style="@style/CalcButton.Operator" />
+            </LinearLayout>
+
+            <!-- Row 2: 4, 5, 6, × -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/num4"
+                    android:text="4"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/num5"
+                    android:text="5"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/num6"
+                    android:text="6"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/times"
+                    android:text="×"
+                    style="@style/CalcButton.Operator" />
+            </LinearLayout>
+
+            <!-- Row 3: 1, 2, 3, − -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/num1"
+                    android:text="1"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/num2"
+                    android:text="2"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/num3"
+                    android:text="3"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/min"
+                    android:text="−"
+                    style="@style/CalcButton.Operator" />
+            </LinearLayout>
+
+            <!-- Row 4: 0, ., =, + -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/num0"
+                    android:text="0"
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/point"
+                    android:text="."
+                    style="@style/CalcButton.Number" />
+
+                <Button
+                    android:id="@+id/equal"
+                    android:text="="
+                    style="@style/CalcButton.Operator" />
+
+                <Button
+                    android:id="@+id/plus"
+                    android:text="+"
+                    style="@style/CalcButton.Operator" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

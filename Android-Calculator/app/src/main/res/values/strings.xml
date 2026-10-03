@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Calculator</string>
+    <string name="app_name">CalcKit</string>
     <string name="error_label">Error</string>
+    <string name="cannot_divide_by_zero">Cannot divide by zero</string>
+    <string name="history_title">Calculation History</string>
+    <string name="history_empty">No calculations yet</string>
+    <string name="history_empty_subtitle">Your past results will appear here</string>
+    <string name="clear_history">Clear All</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="action_history">History</string>
+    <string name="action_science">Scientific Functions</string>
+    <string name="action_converter">Unit Converter</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Converter Strings -->
+    <string name="converter_title">Unit Converter</string>
+    <string name="copy_result">Copy</string>
+    <string name="swap_units">Swap Units</string>
+
+    <!-- Settings Strings -->
+    <string name="settings_title">Settings</string>
+    <string name="theme_title">Appearance Theme</string>
+    <string name="theme_system">Follow System</string>
+    <string name="theme_light">Clean Light</string>
+    <string name="theme_dark">AMOLED Dark</string>
+    <string name="feedback_title">Touch &amp; Audio Feedback</string>
+    <string name="haptic_feedback">Haptic Touch Vibration</string>
+    <string name="sound_feedback">Click Sound</string>
 </resources>

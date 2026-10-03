@@ -12,7 +12,8 @@
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="100dp" />
-            <solid android:color="@color/colorButtonSpecial" />
+            <solid android:color="@color/colorButtonOperatorActive" />
+            <stroke android:width="2dp" android:color="@color/colorButtonOperator" />
         </shape>
     </item>
 

@@ -3,40 +3,113 @@ package com.tamim.calculator;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.tamim.calculator.data.PreferencesManager;
 import com.tamim.calculator.databinding.ActivityMainBinding;
+import com.tamim.calculator.ui.ConverterBottomSheetDialogFragment;
+import com.tamim.calculator.ui.HistoryBottomSheetDialogFragment;
+import com.tamim.calculator.ui.SettingsDialogFragment;
+import com.tamim.calculator.util.NumberFormatter;
+import com.tamim.calculator.viewmodel.CalculatorViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
-    private final StringBuilder currentInput = new StringBuilder("0");
-    private boolean isNewEntry = true;
-    private boolean lastWasEquals = false;
-
-    private final Calculator calculator = new Calculator();
+    private CalculatorViewModel viewModel;
+    private PreferencesManager prefs;
+    private AudioManager audioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        prefs = new PreferencesManager(this);
+        prefs.applySavedTheme();
+
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        viewModel = new ViewModelProvider(this).get(CalculatorViewModel.class);
+
+        setupObservers();
         wireDigitButtons();
         wireOperatorButtons();
         wireFunctionButtons();
+        wireMemoryButtons();
+        wireScientificButtons();
         setupDisplayShortcuts();
+        setupHeaderActions();
     }
 
     private void performFeedback(View view) {
-        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+        if (prefs.isHapticEnabled()) {
+            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+        }
+        if (prefs.isSoundEnabled() && audioManager != null) {
+            audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+        }
+    }
+
+    private void setupObservers() {
+        viewModel.getDisplay().observe(this, text -> {
+            binding.screen.setText(text);
+        });
+
+        viewModel.getExpression().observe(this, expr -> {
+            binding.expression.setText(expr);
+        });
+
+        viewModel.getActiveOperator().observe(this, this::updateOperatorHighlight);
+
+        viewModel.getIsClearAllState().observe(this, isClearAll -> {
+            binding.ac.setText(isClearAll ? "AC" : "C");
+        });
+
+        viewModel.getIsRadMode().observe(this, isRad -> {
+            if (binding.badgeAngleMode != null) {
+                binding.badgeAngleMode.setText(isRad ? "RAD" : "DEG");
+            }
+        });
+
+        viewModel.getHasMemory().observe(this, hasMem -> {
+            if (binding.badgeMemory != null) {
+                binding.badgeMemory.setVisibility(hasMem ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    private void updateOperatorHighlight(String activeOp) {
+        Button[] ops = { binding.plus, binding.min, binding.times, binding.div };
+        String[] opSymbols = { "+", "−", "×", "÷" };
+
+        int defaultBg = R.drawable.btn_operator;
+        int activeBg = R.drawable.btn_operator_active;
+        int defaultColor = ContextCompat.getColor(this, R.color.colorTextOperator);
+        int activeColor = ContextCompat.getColor(this, R.color.colorOperatorActiveText);
+
+        for (int i = 0; i < ops.length; i++) {
+            Button btn = ops[i];
+            if (btn == null) continue;
+
+            if (opSymbols[i].equals(activeOp)) {
+                btn.setBackgroundResource(activeBg);
+                btn.setTextColor(activeColor);
+            } else {
+                btn.setBackgroundResource(defaultBg);
+                btn.setTextColor(defaultColor);
+            }
+        }
     }
 
     private void wireDigitButtons() {
@@ -46,15 +119,17 @@ public class MainActivity extends AppCompatActivity {
         };
 
         for (Button btn : digitButtons) {
-            btn.setOnClickListener(v -> {
-                performFeedback(v);
-                appendDigit(((Button) v).getText().toString());
-            });
+            if (btn != null) {
+                btn.setOnClickListener(v -> {
+                    performFeedback(v);
+                    viewModel.appendDigit(((Button) v).getText().toString());
+                });
+            }
         }
 
         binding.point.setOnClickListener(v -> {
             performFeedback(v);
-            appendDecimal();
+            viewModel.appendDecimal();
         });
     }
 
@@ -64,39 +139,218 @@ public class MainActivity extends AppCompatActivity {
         };
 
         for (Button btn : operatorButtons) {
-            btn.setOnClickListener(v -> {
-                performFeedback(v);
-                handleOperator(((Button) v).getText().toString());
-            });
+            if (btn != null) {
+                btn.setOnClickListener(v -> {
+                    performFeedback(v);
+                    viewModel.handleOperator(((Button) v).getText().toString());
+                });
+            }
         }
 
         binding.equal.setOnClickListener(v -> {
             performFeedback(v);
-            handleEquals();
+            viewModel.handleEquals();
         });
     }
 
     private void wireFunctionButtons() {
         binding.ac.setOnClickListener(v -> {
             performFeedback(v);
-            handleClear();
+            viewModel.handleClear();
         });
 
         binding.del.setOnClickListener(v -> {
             performFeedback(v);
-            handleDelete();
+            viewModel.handleDelete();
         });
 
         binding.del.setOnLongClickListener(v -> {
             performFeedback(v);
-            handleClear();
+            viewModel.handleClear();
             return true;
         });
 
         binding.percent.setOnClickListener(v -> {
             performFeedback(v);
-            handlePercent();
+            viewModel.handlePercent();
         });
+
+        if (binding.negate != null) {
+            binding.negate.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleNegate();
+            });
+        }
+    }
+
+    private void wireMemoryButtons() {
+        if (binding.btnMC != null) {
+            binding.btnMC.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleMemoryClear();
+            });
+        }
+        if (binding.btnMR != null) {
+            binding.btnMR.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleMemoryRecall();
+            });
+        }
+        if (binding.btnMPlus != null) {
+            binding.btnMPlus.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleMemoryAdd();
+            });
+        }
+        if (binding.btnMMinus != null) {
+            binding.btnMMinus.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleMemorySubtract();
+            });
+        }
+        if (binding.btnMS != null) {
+            binding.btnMS.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleMemoryStore();
+            });
+        }
+    }
+
+    private void wireScientificButtons() {
+        if (binding.btnToggleScience != null) {
+            binding.btnToggleScience.setOnClickListener(v -> {
+                performFeedback(v);
+                if (binding.panelScience != null) {
+                    boolean isCurrentlyVisible = binding.panelScience.getVisibility() == View.VISIBLE;
+                    binding.panelScience.setVisibility(isCurrentlyVisible ? View.GONE : View.VISIBLE);
+                }
+            });
+        }
+
+        if (binding.badgeAngleMode != null) {
+            binding.badgeAngleMode.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.toggleAngleMode();
+            });
+        }
+
+        if (binding.btnSin != null) {
+            binding.btnSin.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleSin();
+            });
+        }
+
+        if (binding.btnCos != null) {
+            binding.btnCos.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleCos();
+            });
+        }
+
+        if (binding.btnTan != null) {
+            binding.btnTan.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleTan();
+            });
+        }
+
+        if (binding.btnLog != null) {
+            binding.btnLog.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleLog10();
+            });
+        }
+
+        if (binding.btnLn != null) {
+            binding.btnLn.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleNaturalLog();
+            });
+        }
+
+        if (binding.btnPower != null) {
+            binding.btnPower.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleOperator("^");
+            });
+        }
+
+        if (binding.btnFact != null) {
+            binding.btnFact.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleFactorial();
+            });
+        }
+
+        if (binding.btnSqrt != null) {
+            binding.btnSqrt.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleSquareRoot();
+            });
+        }
+
+        if (binding.btnSquare != null) {
+            binding.btnSquare.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleSquare();
+            });
+        }
+
+        if (binding.btnReciprocal != null) {
+            binding.btnReciprocal.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.handleReciprocal();
+            });
+        }
+
+        if (binding.btnPi != null) {
+            binding.btnPi.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.appendDigit(String.valueOf(Math.PI));
+            });
+        }
+
+        if (binding.btnE != null) {
+            binding.btnE.setOnClickListener(v -> {
+                performFeedback(v);
+                viewModel.appendDigit(String.valueOf(Math.E));
+            });
+        }
+    }
+
+    private void setupHeaderActions() {
+        if (binding.btnHistory != null) {
+            binding.btnHistory.setOnClickListener(v -> {
+                performFeedback(v);
+                showHistoryBottomSheet();
+            });
+        }
+
+        if (binding.btnConverter != null) {
+            binding.btnConverter.setOnClickListener(v -> {
+                performFeedback(v);
+                ConverterBottomSheetDialogFragment.newInstance()
+                        .show(getSupportFragmentManager(), "ConverterBottomSheet");
+            });
+        }
+
+        if (binding.btnSettings != null) {
+            binding.btnSettings.setOnClickListener(v -> {
+                performFeedback(v);
+                SettingsDialogFragment.newInstance()
+                        .show(getSupportFragmentManager(), "SettingsDialog");
+            });
+        }
+    }
+
+    private void showHistoryBottomSheet() {
+        HistoryBottomSheetDialogFragment fragment = HistoryBottomSheetDialogFragment.newInstance();
+        fragment.setViewModel(viewModel);
+        fragment.setCallback(item -> {
+            viewModel.onHistoryItemSelected(item);
+        });
+        fragment.show(getSupportFragmentManager(), "HistoryBottomSheet");
     }
 
     private void setupDisplayShortcuts() {
@@ -118,171 +372,11 @@ public class MainActivity extends AppCompatActivity {
         if (clipboard != null) {
             ClipData clip = ClipData.newPlainText("Calculator Result", text);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void appendDigit(String digit) {
-        if (isNewEntry) {
-            currentInput.setLength(0);
-            currentInput.append(digit);
-            isNewEntry = false;
-            lastWasEquals = false;
-        } else {
-            if ("0".equals(currentInput.toString())) {
-                currentInput.setLength(0);
-            }
-            currentInput.append(digit);
-        }
-        binding.screen.setText(currentInput);
-    }
-
-    private void appendDecimal() {
-        if (isNewEntry) {
-            currentInput.setLength(0);
-            currentInput.append("0.");
-            isNewEntry = false;
-            lastWasEquals = false;
-        } else if (!currentInput.toString().contains(".")) {
-            currentInput.append(".");
-        }
-        binding.screen.setText(currentInput);
-    }
-
-    private void handleOperator(String operator) {
-        if (isNewEntry && calculator.hasPendingOperator()) {
-            calculator.setOperator(operator);
-            swapLastOperatorInExpression(operator);
-            return;
-        }
-
-        double input = parseCurrentInput();
-
-        if (lastWasEquals) {
-            calculator.storeValue(input);
-            binding.expression.setText(formatNumber(input) + " " + operator);
-        } else if (calculator.hasPendingOperator()) {
-            try {
-                double result = calculator.evaluate(input);
-                binding.expression.setText(
-                    binding.expression.getText() + " " + formatNumber(input) + " " + operator
-                );
-                updateDisplay(result);
-            } catch (ArithmeticException e) {
-                showError();
-                return;
-            }
-        } else {
-            calculator.evaluate(input);
-            binding.expression.setText(formatNumber(input) + " " + operator);
-        }
-
-        calculator.setOperator(operator);
-        isNewEntry = true;
-        lastWasEquals = false;
-    }
-
-    private void handleEquals() {
-        if (lastWasEquals) return;
-
-        double input = parseCurrentInput();
-        String pendingOp = calculator.getPendingOperator();
-
-        String newExpr = (pendingOp != null)
-            ? binding.expression.getText() + " " + formatNumber(input) + " ="
-            : formatNumber(input) + " =";
-
-        try {
-            double result = calculator.evaluate(input);
-            binding.expression.setText(newExpr);
-            updateDisplay(result);
-            calculator.storeValue(result);
-        } catch (ArithmeticException e) {
-            binding.expression.setText(newExpr);
-            showError();
-            return;
-        }
-
-        isNewEntry = true;
-        lastWasEquals = true;
-    }
-
-    private void handleClear() {
-        calculator.reset();
-        currentInput.setLength(0);
-        currentInput.append("0");
-        binding.screen.setText("0");
-        binding.expression.setText("");
-        isNewEntry = true;
-        lastWasEquals = false;
-    }
-
-    private void handleDelete() {
-        if (isNewEntry) return;
-
-        if (currentInput.length() > 1) {
-            currentInput.deleteCharAt(currentInput.length() - 1);
-            if (currentInput.charAt(currentInput.length() - 1) == '.') {
-                currentInput.deleteCharAt(currentInput.length() - 1);
-            }
-        } else {
-            currentInput.setLength(0);
-            currentInput.append("0");
-        }
-        binding.screen.setText(currentInput);
-    }
-
-    private void handlePercent() {
-        double value = parseCurrentInput() / 100.0;
-        String formatted = formatNumber(value);
-        currentInput.setLength(0);
-        currentInput.append(formatted);
-        binding.screen.setText(formatted);
-    }
-
-    private double parseCurrentInput() {
-        try {
-            return Double.parseDouble(currentInput.toString());
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-
-    private void updateDisplay(double value) {
-        String formatted = formatNumber(value);
-        currentInput.setLength(0);
-        currentInput.append(formatted);
-        binding.screen.setText(formatted);
-    }
-
-    private void swapLastOperatorInExpression(String operator) {
-        String expr = binding.expression.getText().toString().trim();
-        int lastSpace = expr.lastIndexOf(' ');
-        if (lastSpace >= 0) {
-            binding.expression.setText(expr.substring(0, lastSpace + 1) + operator);
-        }
-    }
-
-    private void showError() {
-        binding.screen.setText(R.string.error_label);
-        binding.expression.setText("");
-        currentInput.setLength(0);
-        currentInput.append("0");
-        calculator.reset();
-        isNewEntry = true;
-        lastWasEquals = false;
-    }
-
-    static String formatNumber(double value) {
-        if (Double.isInfinite(value) || Double.isNaN(value)) return "Error";
-        if (value == 0) return "0";
-
-        if (value == Math.floor(value) && Math.abs(value) < 1e15) {
-            return String.valueOf((long) value);
-        }
-
-        return String.format("%.8f", value)
-                      .replaceAll("0+$", "")
-                      .replaceAll("\\.$", "");
+    public static String formatNumber(double value) {
+        return NumberFormatter.formatNumber(value);
     }
 }

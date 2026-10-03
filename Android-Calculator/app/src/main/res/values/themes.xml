@@ -1,13 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Calculator" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorBackground</item>
-        <item name="colorPrimaryVariant">@color/colorBackground</item>
-        <item name="colorOnPrimary">@color/colorTextPrimary</item>
+    <style name="Theme.Calculator" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorButtonOperator</item>
+        <item name="colorPrimaryVariant">@color/colorButtonOperator</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="android:windowBackground">@color/colorBackground</item>
         <item name="android:statusBarColor">@color/colorBackground</item>
         <item name="android:navigationBarColor">@color/colorBackground</item>
-        <item name="buttonStyle">@style/Widget.AppCompat.Button</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+        <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialogTheme</item>
+    </style>
+
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
     </style>
 
     <style name="CalcButton" parent="Widget.AppCompat.Button">
@@ -26,14 +35,31 @@
 
     <style name="CalcButton.Number">
         <item name="android:background">@drawable/btn_number</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
     </style>
 
     <style name="CalcButton.Operator">
         <item name="android:background">@drawable/btn_operator</item>
+        <item name="android:textColor">@color/colorTextOperator</item>
     </style>
 
     <style name="CalcButton.Special">
         <item name="android:background">@drawable/btn_special</item>
+        <item name="android:textColor">@color/colorTextSpecial</item>
+    </style>
+
+    <style name="CalcButton.Function">
+        <item name="android:background">@drawable/btn_function</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="CalcButton.Memory">
+        <item name="android:background">@drawable/btn_function</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">3dp</item>
     </style>
 
 </resources>

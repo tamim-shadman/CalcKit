@@ -1,70 +1,60 @@
 package com.tamim.calculator;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import com.tamim.calculator.engine.CalculatorEngine;
 
+import java.math.BigDecimal;
+
+/**
+ * High-precision calculator wrapper delegating to {@link CalculatorEngine}.
+ * Preserves backwards-compatibility with existing double-based APIs while providing
+ * exact BigDecimal calculations.
+ */
 public class Calculator {
 
-    private static final MathContext MATH_CONTEXT = new MathContext(12, RoundingMode.HALF_UP);
-    private BigDecimal storedValue = BigDecimal.ZERO;
-    private String pendingOperator = null;
+    private final CalculatorEngine engine = new CalculatorEngine();
 
     public double evaluate(double input) {
-        BigDecimal current = BigDecimal.valueOf(input);
-        if (pendingOperator == null) {
-            storedValue = current;
-            return input;
-        }
-
-        BigDecimal result;
-        switch (pendingOperator) {
-            case "+":
-                result = storedValue.add(current, MATH_CONTEXT);
-                break;
-            case "−":
-                result = storedValue.subtract(current, MATH_CONTEXT);
-                break;
-            case "×":
-                result = storedValue.multiply(current, MATH_CONTEXT);
-                break;
-            case "÷":
-                if (current.compareTo(BigDecimal.ZERO) == 0) {
-                    throw new ArithmeticException("Cannot divide by zero");
-                }
-                result = storedValue.divide(current, 10, RoundingMode.HALF_UP).stripTrailingZeros();
-                break;
-            default:
-                result = current;
-        }
-
-        storedValue = result;
+        BigDecimal result = engine.evaluate(BigDecimal.valueOf(input));
         return result.doubleValue();
     }
 
+    public BigDecimal evaluate(BigDecimal input) {
+        return engine.evaluate(input);
+    }
+
     public void storeValue(double value) {
-        storedValue = BigDecimal.valueOf(value);
-        pendingOperator = null;
+        engine.storeValue(BigDecimal.valueOf(value));
+    }
+
+    public void storeValue(BigDecimal value) {
+        engine.storeValue(value);
     }
 
     public void setOperator(String operator) {
-        pendingOperator = operator;
+        engine.setOperator(operator);
     }
 
     public String getPendingOperator() {
-        return pendingOperator;
+        return engine.getPendingOperator();
     }
 
     public double getStoredValue() {
-        return storedValue.doubleValue();
+        return engine.getStoredValue().doubleValue();
+    }
+
+    public BigDecimal getStoredBigDecimal() {
+        return engine.getStoredValue();
     }
 
     public boolean hasPendingOperator() {
-        return pendingOperator != null;
+        return engine.hasPendingOperator();
     }
 
     public void reset() {
-        storedValue = BigDecimal.ZERO;
-        pendingOperator = null;
+        engine.reset();
+    }
+
+    public CalculatorEngine getEngine() {
+        return engine;
     }
 }
